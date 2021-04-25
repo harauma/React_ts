@@ -1,13 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
 import "./styles.css";
+import { useAllUsers } from "./hooks/useAllUsers";
 import { Todo } from "./Todo";
 import { TodoType } from "./types/todo";
 import { Text } from "./Text";
 import { UserProfile } from "./UserProfile";
 import { UserCard } from "./components/UserCard";
-import { User } from "./types/api/user";
-import { userProfile } from "./types/userProfile";
 
 const userInfo = {
   name: "サンプル",
@@ -15,15 +14,10 @@ const userInfo = {
 };
 
 export default function App() {
+  const { getUsers, userProfiles, loading, error } = useAllUsers();
   const [todos, setTodos] = useState<Array<TodoType>>([]);
-  const [userProfiles, setUserProfiles] = useState<Array<userProfile>>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
 
   const onClickFetchData = () => {
-    setLoading(true);
-    setError(false);
-
     axios
       .get<Array<TodoType>>("https://jsonplaceholder.typicode.com/todos")
       .then((res) => {
@@ -31,25 +25,7 @@ export default function App() {
       });
   };
 
-  const onClickFetchUser = () => {
-    axios
-      .get<Array<User>>("https://jsonplaceholder.typicode.com/users")
-      .then((res) => {
-        const data = res.data.map((user) => ({
-          id: user.id,
-          name: `${user.name}(${user.username})`,
-          email: user.email,
-          address: `${user.address.city}${user.address.suite}${user.address.street}`
-        }));
-        setUserProfiles(data);
-      })
-      .catch(() => {
-        setError(true);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const onClickFetchUser = () => getUsers();
   return (
     <div className="App">
       <UserProfile user={userInfo} />
