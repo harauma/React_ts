@@ -1,9 +1,7 @@
-import axios from "axios";
-import { useState } from "react";
 import "./styles.css";
 import { useAllUsers } from "./hooks/useAllUsers";
+import { useAllTodos } from "./hooks/useAllTodos";
 import { Todo } from "./Todo";
-import { TodoType } from "./types/todo";
 import { Text } from "./Text";
 import { UserProfile } from "./UserProfile";
 import { UserCard } from "./components/UserCard";
@@ -15,15 +13,9 @@ const userInfo = {
 
 export default function App() {
   const { getUsers, userProfiles, loading, error } = useAllUsers();
-  const [todos, setTodos] = useState<Array<TodoType>>([]);
+  const { todos, getTodos } = useAllTodos();
 
-  const onClickFetchData = () => {
-    axios
-      .get<Array<TodoType>>("https://jsonplaceholder.typicode.com/todos")
-      .then((res) => {
-        setTodos(res.data);
-      });
-  };
+  const onClickFetchData = () => getTodos();
 
   const onClickFetchUser = () => getUsers();
   return (
